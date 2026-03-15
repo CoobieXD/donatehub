@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="DonateHub — Поддержать стримера">
+  <meta property="og:description" content="Выберите удобный способ поддержки">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>DonateHub — Поддержать стримера</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header__controls">
+        <button class="header__btn" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">
+          <svg class="header__btn-icon header__btn-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="header__btn-icon header__btn-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+        <div class="locale-picker" id="localePicker">
+          <button class="header__btn" id="localeToggle" title="Сменить регион" aria-label="Сменить регион">
+            <svg class="header__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            </svg>
+          </button>
+          <div class="locale-picker__menu" id="localeMenu" hidden>
+            <button class="locale-picker__item" data-region="UA">Українська</button>
+            <button class="locale-picker__item" data-region="RU">Русский</button>
+            <button class="locale-picker__item" data-region="_global">English</button>
+          </div>
+        </div>
+      </div>
+      <h1 class="header__title" id="headerTitle">Поддержать <span class="header__name" id="streamerName">стримера</span></h1>
+      <p class="header__sub" id="headerSub">Выберите удобный способ</p>
+    </header>
+
+    <!-- Loading state -->
+    <div id="stateLoading" class="state state--loading">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Определяем регион...</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="stateError" class="state state--error" hidden>
+      <div class="error-icon">!</div>
+      <p class="error-text">Не удалось загрузить конфигурацию</p>
+      <button class="error-retry" id="errorRetry" onclick="location.reload()">Попробовать снова</button>
+    </div>
+
+    <!-- Auto-redirect state (returning visitor) -->
+    <div id="stateRedirect" class="state state--redirect" hidden>
+      <div class="redirect-card" id="redirectCard">
+        <div class="redirect-card__icon" id="redirectIcon"></div>
+        <h2 class="redirect-card__title" id="redirectTitle"></h2>
+        <p class="redirect-card__desc" id="redirectDesc">Вы обычно используете эту платформу</p>
+        <div class="redirect-card__countdown">
+          <span id="countdownPrefix">Перенаправление через</span> <span id="countdownNum">5</span> <span id="countdownSuffix">сек...</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar__fill" id="progressFill"></div>
+        </div>
+        <a href="#" class="redirect-card__btn" id="redirectBtn">Перейти сейчас</a>
+      </div>
+      <button class="link-btn" id="cancelRedirectBtn">Отмена — выбрать другую</button>
+    </div>
+
+    <!-- Main selection state -->
+    <div id="stateSelect" class="state state--select" hidden>
+      <!-- Донат -->
+      <section class="section">
+        <h2 class="section__title" id="sectionDonateTitle">Донат</h2>
+        <div class="grid" id="platformGrid"></div>
+      </section>
+
+      <!-- Подписка и другое -->
+      <section class="section" id="sectionExtra">
+        <h2 class="section__title" id="sectionExtraTitle">Подписка и другое</h2>
+        <div class="grid" id="extraGrid"></div>
+      </section>
+
+      <!-- Реквизиты -->
+      <section class="section" id="sectionRequisites">
+        <h2 class="section__title" id="sectionRequisitesTitle">Реквизиты для перевода</h2>
+        <div class="requisites" id="requisitesList"></div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p id="footerText">Спасибо за поддержку!</p>
+    </footer>
+  </div>
+
+  <noscript>
+    <style>.container { display: none; }</style>
+    <div class="noscript">
+      <h1>Поддержать стримера</h1>
+      <p>Включите JavaScript для автоматического определения региона, или выберите платформу вручную:</p>
+      <ul>
+        <li><a href="https://donatello.to/XXXXX">Donatello</a> — Украинская платформа</li>
+        <li><a href="https://donatepay.ru/don/XXXXX">DonatePay</a> — Платформа донатов</li>
+        <li><a href="https://send.monobank.ua/jar/XXXXX">Monobank Jar</a> — Без комиссии (Украина)</li>
+        <li><a href="https://www.donationalerts.com/r/XXXXX">DonationAlerts</a> — Алерты на стриме</li>
+        <li><a href="https://streamlabs.com/XXXXX/tip">Streamlabs</a> — Международная платформа</li>
+        <li><a href="https://paypal.me/XXXXX">PayPal.me</a> — Универсальный</li>
+      </ul>
+    </div>
+  </noscript>
+
+  <script src="script.js"></script>
+</body>
+</html>

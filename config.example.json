@@ -1,0 +1,66 @@
+{
+  "streamerName": "YourName",
+  "accentColor": "#9147ff",
+  "autoRedirectDelay": 5,
+  "autoRedirectThreshold": 3,
+  "qr": true,
+  "ogImage": "",
+
+  "notifications": {
+    "enabled": false,
+    "ntfyTopic": ""
+  },
+
+  "platforms": {
+    "UA": [
+      { "enabled": true, "id": "donatello", "name": "Donatello", "url": "https://donatello.to/XXXXX", "description": "Українська платформа, OBS-алерти", "priority": 1 },
+      { "enabled": false, "id": "donatepay", "name": "DonatePay", "url": "https://donatepay.eu/don/XXXXX", "description": "Платформа донатів", "priority": 2 },
+      { "enabled": false, "id": "monobank", "name": "Monobank Jar", "url": "https://send.monobank.ua/jar/XXXXX", "description": "Без комісії, миттєвий переказ", "priority": 3 }
+    ],
+    "RU": [
+      { "enabled": true, "id": "donationalerts", "name": "DonationAlerts", "url": "https://www.donationalerts.com/r/XXXXX", "description": "Алерты на стриме, YooMoney/QIWI/карты", "priority": 1 },
+      { "enabled": true, "id": "donatepay", "name": "DonatePay", "url": "https://donatepay.ru/don/XXXXX", "description": "Платформа донатов", "priority": 2 }
+    ],
+    "_global": [
+      { "enabled": true, "id": "streamlabs", "name": "Streamlabs", "url": "https://streamlabs.com/XXXXX/tip", "description": "Industry standard, 0% platform fee", "priority": 1 },
+      { "enabled": true, "id": "donationalerts-global", "name": "DonationAlerts", "url": "https://www.donationalerts.com/r/XXXXX", "description": "Stream alerts, TTS", "priority": 2 },
+      { "enabled": true, "id": "paypal", "name": "PayPal.me", "url": "https://paypal.me/XXXXX", "description": "Universal payment method", "priority": 3 }
+    ]
+  },
+
+  "subscriptions": {
+    "enabled": false,
+    "UA": [
+      { "enabled": true, "id": "patreon", "name": "Patreon", "url": "https://www.patreon.com/XXXXX", "description": "Щомісячна підписка" }
+    ],
+    "RU": [
+      { "enabled": true, "id": "boosty", "name": "Boosty", "url": "https://boosty.to/XXXXX", "description": "Подписка и эксклюзивный контент" }
+    ],
+    "_global": [
+      { "enabled": true, "id": "patreon", "name": "Patreon", "url": "https://www.patreon.com/XXXXX", "description": "Monthly subscription" },
+      { "enabled": false, "id": "kofi", "name": "Ko-fi", "url": "https://ko-fi.com/XXXXX", "description": "Membership, 0% fee" }
+    ]
+  },
+
+  "steam": {
+    "enabled": false,
+    "id": "steam",
+    "name": "Steam Trade",
+    "url": "https://steamcommunity.com/tradeoffer/new/?partner=XXXXX&token=XXXXX",
+    "description": "Steam trade offer"
+  },
+
+  "requisites": {
+    "enabled": false,
+    "items": [
+    { "enabled": true, "id": "usdt", "name": "USDT (TRC-20)", "value": "TXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" },
+    { "enabled": true, "id": "btc", "name": "BTC", "value": "bc1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" },
+    { "enabled": true, "id": "ton", "name": "TON", "value": "UQXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" },
+    { "enabled": false, "id": "eth", "name": "ETH (ERC-20)", "value": "0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" },
+    { "enabled": false, "id": "sol", "name": "SOL", "value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" },
+    { "enabled": false, "id": "paypal", "name": "PayPal", "value": "your@email.com" },
+    { "enabled": false, "id": "visa", "name": "Visa", "value": "4XXX XXXX XXXX XXXX", "region": "UA" },
+    { "enabled": false, "id": "mastercard", "name": "MasterCard", "value": "5XXX XXXX XXXX XXXX", "region": "UA" }
+    ]
+  }
+}
