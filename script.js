@@ -559,30 +559,28 @@ function getSubscriptionsForRegion(region) {
 // ============================================================
 const CLICKS_KEY = "donatehub_clicks";
 
-function getClicks() {
-  try { return JSON.parse(localStorage.getItem(CLICKS_KEY)) || {}; } catch { return {}; }
+function getStreak() {
+  try { return JSON.parse(localStorage.getItem(CLICKS_KEY)) || { id: null, count: 0 }; } catch { return { id: null, count: 0 }; }
 }
 
 function trackClick(platformId) {
-  const clicks = getClicks();
-  clicks[platformId] = (clicks[platformId] || 0) + 1;
-  localStorage.setItem(CLICKS_KEY, JSON.stringify(clicks));
+  const streak = getStreak();
+  if (streak.id === platformId) {
+    streak.count += 1;
+  } else {
+    streak.id = platformId;
+    streak.count = 1;
+  }
+  localStorage.setItem(CLICKS_KEY, JSON.stringify(streak));
 }
 
 function getPreferredPlatform(platforms) {
-  const threshold = CONFIG.autoRedirectThreshold || 2;
-  const clicks = getClicks();
-  let best = null;
-  let bestCount = 0;
-
-  for (const p of platforms) {
-    const count = clicks[p.id] || 0;
-    if (count >= threshold && count > bestCount) {
-      best = p;
-      bestCount = count;
-    }
+  const threshold = CONFIG.autoRedirectThreshold || 3;
+  const streak = getStreak();
+  if (streak.id && streak.count >= threshold) {
+    return platforms.find(p => p.id === streak.id) || null;
   }
-  return best;
+  return null;
 }
 
 // ============================================================
