@@ -1,7 +1,7 @@
 {
   "streamerName": "Coobie",
   "accentColor": "#9147ff",
-  "autoRedirectDelay": 5,
+  "autoRedirectDelay": 10,
   "autoRedirectThreshold": 3,
   "qr": true,
   "ogImage": "",
