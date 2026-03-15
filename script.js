@@ -446,6 +446,18 @@ async function init() {
 
   notify("page_view", { region: currentRegion, lang: currentLang });
 
+  // ?go — instant redirect to top-priority platform
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("go")) {
+    const platforms = getPlatformsForRegion(region);
+    if (platforms.length > 0) {
+      trackClick(platforms[0].id);
+      notify("platform_click", { platformId: platforms[0].id, platformName: platforms[0].name });
+      window.location.href = platforms[0].url;
+      return;
+    }
+  }
+
   const platforms = getPlatformsForRegion(region);
 
   if (platforms.length === 1 && !hasExtraContent(region)) {
