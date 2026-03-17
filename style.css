@@ -19,6 +19,7 @@
   --border-light: rgba(255, 255, 255, 0.1);
   --copy-done: #4ade80;
   --tooltip-bg: #333;
+  --overlay-bg: rgba(31, 31, 35, 0.8);
   --radius: 12px;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -35,6 +36,7 @@
     --border-subtle: rgba(0, 0, 0, 0.06);
     --border-light: rgba(0, 0, 0, 0.1);
     --tooltip-bg: #555;
+    --overlay-bg: rgba(240, 240, 243, 0.85);
   }
 }
 
@@ -49,6 +51,7 @@
   --border-subtle: rgba(0, 0, 0, 0.06);
   --border-light: rgba(0, 0, 0, 0.1);
   --tooltip-bg: #555;
+  --overlay-bg: rgba(240, 240, 243, 0.85);
 }
 
 /* Explicit dark theme */
@@ -62,6 +65,7 @@
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-light: rgba(255, 255, 255, 0.1);
   --tooltip-bg: #333;
+  --overlay-bg: rgba(31, 31, 35, 0.8);
 }
 
 body {
@@ -406,7 +410,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: var(--radius);
-    background: rgba(31, 31, 35, 0.8);
+    background: var(--overlay-bg);
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -485,27 +489,15 @@ body {
   height: 100%;
 }
 
-.requisite__info {
-  flex: 1;
-  min-width: 0;
-}
-
 .requisite__name {
   font-size: 0.95rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-.requisite__value {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  font-family: monospace;
-  word-break: break-all;
-  line-height: 1.4;
-}
-
-/* Plain requisite (PayPal, Visa, etc.) */
-.requisite--plain {
+/* Shared requisite card layout (plain + crypto) */
+.requisite--plain,
+.requisite--crypto {
   flex-direction: column;
   align-items: stretch;
   text-align: left;
@@ -513,7 +505,8 @@ body {
   gap: 0;
 }
 
-.requisite--plain .requisite__top {
+.requisite--plain .requisite__top,
+.requisite--crypto .requisite__top {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -522,12 +515,14 @@ body {
   width: 100%;
 }
 
-.requisite--plain .requisite__name {
+.requisite--plain .requisite__name,
+.requisite--crypto .requisite__name {
   font-size: 1rem;
   margin-bottom: 0;
 }
 
-.requisite--plain .requisite__bottom {
+.requisite--plain .requisite__bottom,
+.requisite--crypto .requisite__bottom {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -541,38 +536,6 @@ body {
   width: 34px;
   height: 34px;
   padding: 7px;
-}
-
-/* Crypto requisite — vertical card */
-.requisite--crypto {
-  flex-direction: column;
-  align-items: stretch;
-  text-align: left;
-  padding: 0;
-  gap: 0;
-}
-
-.requisite--crypto .requisite__top {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 16px;
-  width: 100%;
-}
-
-.requisite--crypto .requisite__name {
-  font-size: 1rem;
-  margin-bottom: 0;
-}
-
-.requisite--crypto .requisite__bottom {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 16px 12px;
-  border-top: 1px solid var(--border-subtle);
 }
 
 .requisite__input {
@@ -618,7 +581,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: var(--radius) var(--radius) 0 0;
-    background: rgba(31, 31, 35, 0.8);
+    background: var(--overlay-bg);
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -672,7 +635,7 @@ body {
 
 .requisite__copy:hover {
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: var(--border-light);
 }
 
 .requisite__copy--done {

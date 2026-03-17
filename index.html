@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
+  <meta name="description" content="Выберите удобный способ поддержки">
+  <meta name="theme-color" content="#9147ff">
   <meta property="og:title" content="DonateHub — Поддержать стримера">
   <meta property="og:description" content="Выберите удобный способ поддержки">
   <meta property="og:type" content="website">
@@ -26,7 +28,7 @@
           </svg>
         </button>
         <div class="locale-picker" id="localePicker">
-          <button class="header__btn" id="localeToggle" title="Сменить регион" aria-label="Сменить регион">
+          <button class="header__btn" id="localeToggle" title="Сменить регион" aria-label="Сменить регион" aria-expanded="false">
             <svg class="header__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <path d="M2 12h20"/>
@@ -53,8 +55,8 @@
     <!-- Error state -->
     <div id="stateError" class="state state--error" hidden>
       <div class="error-icon">!</div>
-      <p class="error-text">Не удалось загрузить конфигурацию</p>
-      <button class="error-retry" id="errorRetry" onclick="location.reload()">Попробовать снова</button>
+      <p class="error-text" id="errorText">Не удалось загрузить конфигурацию</p>
+      <button class="error-retry" id="errorRetry">Попробовать снова</button>
     </div>
 
     <!-- Auto-redirect state (returning visitor) -->
@@ -106,12 +108,10 @@
       <h1>Поддержать стримера</h1>
       <p>Включите JavaScript для автоматического определения региона, или выберите платформу вручную:</p>
       <ul>
-        <li><a href="https://donatello.to/XXXXX">Donatello</a> — Украинская платформа</li>
-        <li><a href="https://donatepay.ru/don/XXXXX">DonatePay</a> — Платформа донатов</li>
-        <li><a href="https://send.monobank.ua/jar/XXXXX">Monobank Jar</a> — Без комиссии (Украина)</li>
-        <li><a href="https://www.donationalerts.com/r/XXXXX">DonationAlerts</a> — Алерты на стриме</li>
-        <li><a href="https://streamlabs.com/XXXXX/tip">Streamlabs</a> — Международная платформа</li>
-        <li><a href="https://paypal.me/XXXXX">PayPal.me</a> — Универсальный</li>
+        <li><a href="https://donatello.to/coobie">Donatello</a> — Украинская платформа</li>
+        <li><a href="https://donatepay.ru/don/Coobie">DonatePay</a> — Платформа донатов</li>
+        <li><a href="https://www.donationalerts.com/r/coobie">DonationAlerts</a> — Алерты на стриме</li>
+        <li><a href="https://streamlabs.com/coobiehd/tip">Streamlabs</a> — Международная платформа</li>
       </ul>
     </div>
   </noscript>

@@ -1,6 +1,10 @@
 // ============================================================
 // КОНФИГ — редактируй config.json
 // ============================================================
+const LS_THEME = "donatehub_theme";
+const LS_LOCALE = "donatehub_locale";
+const LS_CLICKS = "donatehub_clicks";
+
 let CONFIG = null;
 
 async function loadConfig() {
@@ -104,9 +108,11 @@ function t(key) {
 function applyTranslations() {
   const name = CONFIG ? CONFIG.streamerName : "стримера";
 
-  $("headerTitle").innerHTML = `${esc(t("supportTitle"))} <span class="header__name" id="streamerName">${esc(name)}</span>`;
+  $("headerTitle").childNodes[0].textContent = t("supportTitle") + " ";
+  $("streamerName").textContent = name;
   $("headerSub").textContent = t("supportSub");
   $("loadingText").textContent = t("loading");
+  $("errorText").textContent = t("errorDefault");
   $("errorRetry").textContent = t("retry");
   $("sectionDonateTitle").textContent = t("sectionDonate");
   $("sectionExtraTitle").textContent = t("sectionExtra");
@@ -311,7 +317,7 @@ const cancelRedirectBtn = $("cancelRedirectBtn");
 // Тема
 // ============================================================
 function initTheme() {
-  const saved = localStorage.getItem("donatehub_theme");
+  const saved = localStorage.getItem(LS_THEME);
   if (saved) {
     document.documentElement.setAttribute("data-theme", saved);
   }
@@ -330,7 +336,7 @@ function initTheme() {
     }
 
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("donatehub_theme", next);
+    localStorage.setItem(LS_THEME, next);
   });
 }
 
@@ -344,6 +350,7 @@ function initLocalePicker() {
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     menu.hidden = !menu.hidden;
+    toggle.setAttribute("aria-expanded", !menu.hidden);
   });
 
   menu.addEventListener("click", (e) => {
@@ -351,12 +358,14 @@ function initLocalePicker() {
     if (!item) return;
     const region = item.dataset.region;
     menu.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
     switchLocale(region);
   });
 
   document.addEventListener("click", (e) => {
     if (!$("localePicker").contains(e.target)) {
       menu.hidden = true;
+      toggle.setAttribute("aria-expanded", "false");
     }
   });
 }
@@ -365,7 +374,7 @@ function switchLocale(region) {
   currentRegion = region;
   currentCountryCode = region === "_global" ? "" : region;
   currentLang = REGION_TO_LANG[region] || "en";
-  localStorage.setItem("donatehub_locale", region);
+  localStorage.setItem(LS_LOCALE, region);
 
   applyTranslations();
 
@@ -385,19 +394,7 @@ function switchLocale(region) {
   sectionRequisites.hidden = false;
 
   // Re-render
-  const platforms = getPlatformsForRegion(region);
-
-  if (platforms.length === 1 && !hasExtraContent(region)) {
-    showAutoRedirect(platforms[0], region, currentCountryCode);
-    return;
-  }
-
-  const preferred = getPreferredPlatform(platforms);
-  if (preferred) {
-    showAutoRedirect(preferred, region, currentCountryCode);
-  } else {
-    showSelection(platforms, region, currentCountryCode);
-  }
+  renderForRegion(region);
 }
 
 // ============================================================
@@ -406,6 +403,7 @@ function switchLocale(region) {
 async function init() {
   initTheme();
   initLocalePicker();
+  $("errorRetry").addEventListener("click", () => location.reload());
 
   try {
     await loadConfig();
@@ -414,11 +412,16 @@ async function init() {
     return;
   }
 
-  // Check for saved locale override
-  const savedLocale = localStorage.getItem("donatehub_locale");
+  // Query param takes priority over saved locale
+  const params = new URLSearchParams(window.location.search);
+  const regionOverride = params.get("region");
+  const savedLocale = localStorage.getItem(LS_LOCALE);
   let region, countryCode;
 
-  if (savedLocale) {
+  if (regionOverride) {
+    region = mapCountryToRegion(regionOverride);
+    countryCode = regionOverride.toUpperCase();
+  } else if (savedLocale) {
     region = savedLocale;
     countryCode = savedLocale === "_global" ? "" : savedLocale;
   } else {
@@ -440,6 +443,9 @@ async function init() {
     if (ogImg) ogImg.setAttribute("content", CONFIG.ogImage);
   }
 
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor && CONFIG.accentColor) themeColor.setAttribute("content", CONFIG.accentColor);
+
   applyTranslations();
 
   stateLoading.hidden = true;
@@ -447,7 +453,6 @@ async function init() {
   notify("page_view", { region: currentRegion, lang: currentLang });
 
   // ?go — instant redirect to top-priority platform
-  const params = new URLSearchParams(window.location.search);
   if (params.has("go")) {
     const platforms = getPlatformsForRegion(region);
     if (platforms.length > 0) {
@@ -458,19 +463,22 @@ async function init() {
     }
   }
 
+  renderForRegion(region);
+}
+
+function renderForRegion(region) {
   const platforms = getPlatformsForRegion(region);
 
   if (platforms.length === 1 && !hasExtraContent(region)) {
-    showAutoRedirect(platforms[0], region, countryCode);
+    showAutoRedirect(platforms[0], region);
     return;
   }
 
   const preferred = getPreferredPlatform(platforms);
-
   if (preferred) {
-    showAutoRedirect(preferred, region, countryCode);
+    showAutoRedirect(preferred, region);
   } else {
-    showSelection(platforms, region, countryCode);
+    showSelection(platforms, region);
   }
 }
 
@@ -479,7 +487,7 @@ function showError(message) {
   if (stateError) {
     stateError.hidden = false;
     const errorText = stateError.querySelector(".error-text");
-    if (errorText) errorText.textContent = message;
+    if (errorText) errorText.textContent = message || t("errorDefault");
   }
 }
 
@@ -557,10 +565,9 @@ function getSubscriptionsForRegion(region) {
 // ============================================================
 // localStorage: предпочтительная платформа
 // ============================================================
-const CLICKS_KEY = "donatehub_clicks";
 
 function getStreak() {
-  try { return JSON.parse(localStorage.getItem(CLICKS_KEY)) || { id: null, count: 0 }; } catch { return { id: null, count: 0 }; }
+  try { return JSON.parse(localStorage.getItem(LS_CLICKS)) || { id: null, count: 0 }; } catch { return { id: null, count: 0 }; }
 }
 
 function trackClick(platformId) {
@@ -571,7 +578,7 @@ function trackClick(platformId) {
     streak.id = platformId;
     streak.count = 1;
   }
-  localStorage.setItem(CLICKS_KEY, JSON.stringify(streak));
+  localStorage.setItem(LS_CLICKS, JSON.stringify(streak));
 }
 
 function getPreferredPlatform(platforms) {
@@ -602,7 +609,7 @@ function hasExtraContent(region) {
 // ============================================================
 let redirectAbort = null;
 
-function showAutoRedirect(platform, region, countryCode) {
+function showAutoRedirect(platform, region) {
   stateRedirect.hidden = false;
 
   redirectIcon.innerHTML = ICONS[platform.id] || "";
@@ -659,14 +666,14 @@ function showAutoRedirect(platform, region, countryCode) {
     redirectAbort = null;
     stateRedirect.hidden = true;
     const platforms = getPlatformsForRegion(region);
-    showSelection(platforms, region, countryCode);
+    showSelection(platforms, region);
   }, { signal });
 }
 
 // ============================================================
 // Отображение: полный выбор
 // ============================================================
-function showSelection(platforms, region, countryCode) {
+function showSelection(platforms, region) {
   stateSelect.hidden = false;
 
   renderPlatformCards(platformGrid, platforms, true);
@@ -763,7 +770,7 @@ function renderRequisites(container, requisites) {
         </div>
         <div class="requisite__bottom">
           <input class="requisite__input" type="text" value="${escAttr(r.value)}" readonly>
-          <button class="requisite__copy" data-tooltip="${escAttr(t("copy"))}" title="${escAttr(t("copy"))}">${copyIcon}</button>
+          <button class="requisite__copy" data-tooltip="${escAttr(t("copy"))}" title="${escAttr(t("copy"))}" aria-label="${escAttr(t("copy"))}">${copyIcon}</button>
         </div>
       `;
     } else {
@@ -775,7 +782,7 @@ function renderRequisites(container, requisites) {
         </div>
         <div class="requisite__bottom">
           <input class="requisite__input" type="text" value="${escAttr(r.value)}" readonly>
-          <button class="requisite__copy" data-tooltip="${escAttr(t("copy"))}" title="${escAttr(t("copy"))}">${copyIcon}</button>
+          <button class="requisite__copy" data-tooltip="${escAttr(t("copy"))}" title="${escAttr(t("copy"))}" aria-label="${escAttr(t("copy"))}">${copyIcon}</button>
         </div>
       `;
     }
@@ -797,7 +804,7 @@ function renderRequisites(container, requisites) {
           btn.setAttribute("data-tooltip", t("copy"));
           btn.innerHTML = copyIcon;
         }, 1500);
-      });
+      }).catch(() => {});
     });
 
     container.appendChild(row);
