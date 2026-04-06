@@ -174,6 +174,10 @@ const ICONS = {
     <rect x="17" y="24" width="6" height="3" rx="1" fill="#fff"/>
     <rect x="14" y="29" width="12" height="3" rx="1.5" fill="#fff"/>
   </svg>`,
+  donatex: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="40" height="40" rx="8" fill="#6c5ce7"/>
+    <path d="M12 12l7 8-7 8h5l4.5-5.3L26 28h5l-7-8 7-8h-5l-4.5 5.3L17 12h-5z" fill="#fff"/>
+  </svg>`,
   donatepay: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="40" height="40" rx="8" fill="#26a650"/>
     <circle cx="20" cy="20" r="10" stroke="#fff" stroke-width="2" fill="none"/>

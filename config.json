@@ -19,7 +19,8 @@
     ],
     "RU": [
       { "enabled": true, "id": "donationalerts", "name": "DonationAlerts", "url": "https://www.donationalerts.com/r/coobie", "description": "Алерты на стриме, YooMoney/QIWI/карты", "priority": 1 },
-      { "enabled": true, "id": "donatepay", "name": "DonatePay", "url": "https://donatepay.ru/don/Coobie", "description": "Платформа донатов", "priority": 2 }
+      { "enabled": true, "id": "donatepay", "name": "DonatePay", "url": "https://donatepay.ru/don/Coobie", "description": "Платформа донатов", "priority": 2 },
+      { "enabled": true, "id": "donatex", "name": "DonateX", "url": "https://donatex.gg/donate/coobie", "description": "Платформа донатов", "priority": 3 }
     ],
     "_global": [
       { "enabled": true, "id": "streamlabs", "name": "Streamlabs", "url": "https://streamlabs.com/coobiehd/tip", "description": "Industry standard, 0% platform fee", "priority": 1 },
