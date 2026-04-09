@@ -52,6 +52,10 @@ const I18N = {
     copied: "Скопировано!",
     themeTitle: "Сменить тему",
     localeTitle: "Сменить регион",
+    disabledTitle: "Увы, донаты сегодня не работают",
+    disabledBirthday: "Лучше поздравьте текстом в чате",
+    disabledBreak: "Я в отпуске — скоро вернусь",
+    disabledTechnical: "Технические неполадки, попробуйте позже",
   },
   uk: {
     supportTitle: "Підтримати",
@@ -72,6 +76,10 @@ const I18N = {
     copied: "Скопійовано!",
     themeTitle: "Змінити тему",
     localeTitle: "Змінити регіон",
+    disabledTitle: "На жаль, донати сьогодні не працюють",
+    disabledBirthday: "Краще привітайте текстом у чаті",
+    disabledBreak: "Я у відпустці — скоро повернусь",
+    disabledTechnical: "Технічні неполадки, спробуйте пізніше",
   },
   en: {
     supportTitle: "Support",
@@ -92,6 +100,10 @@ const I18N = {
     copied: "Copied!",
     themeTitle: "Switch theme",
     localeTitle: "Switch region",
+    disabledTitle: "Donations are off today",
+    disabledBirthday: "Wish me well in chat instead",
+    disabledBreak: "I'm on a break — back soon",
+    disabledTechnical: "Technical issues, try again later",
   },
 };
 
@@ -397,6 +409,14 @@ function switchLocale(region) {
   sectionExtra.hidden = false;
   sectionRequisites.hidden = false;
 
+  // If we're in disabled mode, keep showing the disabled screen (retranslated)
+  const params = new URLSearchParams(window.location.search);
+  const disabledReason = getDisabledParam(params);
+  if (disabledReason !== null) {
+    showDisabled(disabledReason);
+    return;
+  }
+
   // Re-render
   renderForRegion(region);
 }
@@ -454,6 +474,13 @@ async function init() {
 
   stateLoading.hidden = true;
 
+  // ?disabled / ?off / ?pause — show "donations off" screen
+  const disabledReason = getDisabledParam(params);
+  if (disabledReason !== null) {
+    showDisabled(disabledReason);
+    return;
+  }
+
   notify("page_view", { region: currentRegion, lang: currentLang });
 
   // ?go — instant redirect to top-priority platform
@@ -484,6 +511,72 @@ function renderForRegion(region) {
   } else {
     showSelection(platforms, region);
   }
+}
+
+// ============================================================
+// Disabled state (?disabled / ?off / ?pause)
+// ============================================================
+const DISABLED_PARAM_ALIASES = ["disabled", "off", "pause"];
+const DISABLED_REASON_KEYS = {
+  birthday: "disabledBirthday",
+  break: "disabledBreak",
+  technical: "disabledTechnical",
+};
+
+const DISABLED_ICONS = {
+  // Gift box — birthday
+  birthday: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 12 20 22 4 22 4 12"/>
+    <rect x="2" y="7" width="20" height="5"/>
+    <line x1="12" y1="22" x2="12" y2="7"/>
+    <path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/>
+    <path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
+  </svg>`,
+  // Happy face — break / vacation
+  break: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+    <line x1="9" y1="9" x2="9.01" y2="9"/>
+    <line x1="15" y1="9" x2="15.01" y2="9"/>
+  </svg>`,
+  // Gears — technical
+  technical: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>`,
+  // Default — info circle
+  default: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>`,
+};
+
+function getDisabledParam(params) {
+  for (const key of DISABLED_PARAM_ALIASES) {
+    if (params.has(key)) return params.get(key) || "";
+  }
+  return null;
+}
+
+function getDisabledReasonText(reason) {
+  if (!reason) return "";
+  const key = DISABLED_REASON_KEYS[reason.toLowerCase()];
+  return key ? t(key) : reason;
+}
+
+function showDisabled(reason) {
+  if (stateLoading) stateLoading.hidden = true;
+  const el = $("stateDisabled");
+  if (!el) return;
+  el.hidden = false;
+  const reasonKey = (reason || "").toLowerCase();
+  $("disabledIcon").innerHTML = DISABLED_ICONS[reasonKey] || DISABLED_ICONS.default;
+  $("disabledTitle").textContent = t("disabledTitle");
+  const descText = getDisabledReasonText(reason);
+  const descEl = $("disabledDesc");
+  descEl.textContent = descText;
+  descEl.hidden = !descText;
 }
 
 function showError(message) {

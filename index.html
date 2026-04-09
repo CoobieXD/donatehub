@@ -52,6 +52,15 @@
       <p class="loading-text" id="loadingText">Определяем регион...</p>
     </div>
 
+    <!-- Disabled state (temporary shutdown) -->
+    <div id="stateDisabled" class="state state--disabled" hidden>
+      <div class="disabled-card">
+        <div class="disabled-card__icon" id="disabledIcon"></div>
+        <h2 class="disabled-card__title" id="disabledTitle"></h2>
+        <p class="disabled-card__desc" id="disabledDesc" hidden></p>
+      </div>
+    </div>
+
     <!-- Error state -->
     <div id="stateError" class="state state--error" hidden>
       <div class="error-icon">!</div>

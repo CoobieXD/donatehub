@@ -279,6 +279,49 @@ body {
   background: var(--accent-hover);
 }
 
+/* Disabled state (soft "donations off" screen) */
+.disabled-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  animation: fadeInUp 0.4s ease;
+}
+
+.disabled-card__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.disabled-card__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.disabled-card__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.disabled-card__desc {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.disabled-card__desc[hidden] {
+  display: none;
+}
+
 /* Sections */
 .section {
   width: 100%;
